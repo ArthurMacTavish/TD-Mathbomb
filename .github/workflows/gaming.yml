@@ -1,0 +1,39 @@
+name: Deploy Game
+
+on:
+  push:
+    branches: [main]
+  
+  workflow_dispatch:
+
+jobs:
+  Build-Site:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Fetch Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Phaser Init
+      run: npm install
+    
+    - name: Build Game
+      run: npm run build
+
+    - name: Distribute
+      uses: crazy-max/ghaction-github-pages@v4
+      with:
+        target_branch: live-site
+        build_dir: dist
+        fqdn: mathbomb.td.reubenhu.my.id
+      env:
+        # @see https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
